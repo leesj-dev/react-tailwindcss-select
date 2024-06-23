@@ -14,7 +14,7 @@ const Select: React.FC<SelectProps> = ({
     onChange,
     onSearchInputChange,
     placeholder = "선택...",
-    searchInputPlaceholder = "검색...",
+    searchInputPlaceholder = "검색",
     isMultiple = false,
     isClearable = false,
     isSearchable = false,

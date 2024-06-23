@@ -69,7 +69,7 @@ const Item = ({ item }) => {
 
 const GroupItem = ({ item }) => {
     return (React.createElement(React.Fragment, null, item.options.length > 0 && (React.createElement(React.Fragment, null,
-        React.createElement("div", { className: "pr-2 py-2 cursor-default select-none truncate font-bold text-gray-700 dark:text-gray-300" }, item.label),
+        React.createElement("div", { className: "py-2 cursor-default select-none truncate font-bold text-gray-700 dark:text-gray-300" }, item.label),
         item.options.map((item, index) => (React.createElement(Item, { key: index, item: item })))))));
 };
 
@@ -247,7 +247,7 @@ const SearchInput = forwardRef(function SearchInput({ placeholder = "", value = 
         React.createElement("input", { ref: ref, className: "w-full py-2 pl-8 text-sm text-gray-500 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:border-gray-200 dark:focus:border-gray-500 focus:ring-0 focus:outline-none", type: "text", placeholder: placeholder, value: value, onChange: onChange, name: name })));
 });
 
-const Select = ({ options = [], value = null, onChange, onSearchInputChange, placeholder = "선택...", searchInputPlaceholder = "검색...", isMultiple = false, isClearable = false, isSearchable = false, isDisabled = false, menuIsOpen = false, noOptionsMessage = "검색결과가 없습니다" }) => {
+const Select = ({ options = [], value = null, onChange, onSearchInputChange, placeholder = "선택...", searchInputPlaceholder = "검색", isMultiple = false, isClearable = false, isSearchable = false, isDisabled = false, menuIsOpen = false, noOptionsMessage = "검색결과가 없습니다" }) => {
     const [open, setOpen] = useState(menuIsOpen);
     const [list, setList] = useState(options);
     const [inputValue, setInputValue] = useState("");
