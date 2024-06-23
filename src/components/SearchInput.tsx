@@ -8,7 +8,10 @@ interface SearchInputProps {
     name?: string;
 }
 
-const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(function SearchInput({ placeholder = "", value = "", onChange, name = "" }, ref) {
+const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(function SearchInput(
+    { placeholder = "", value = "", onChange, name = "" },
+    ref
+) {
     return (
         <div className="relative py-1 px-2.5">
             <SearchIcon className="absolute w-5 h-5 mt-2.5 pb-0.5 ml-2 text-gray-500" />

@@ -12,7 +12,9 @@ const GroupItem: React.FC<GroupItemProps> = ({ item }) => {
         <>
             {item.options.length > 0 && (
                 <>
-                    <div className="pr-2 py-2 cursor-default select-none truncate font-bold text-gray-700 dark:text-gray-300">{item.label}</div>
+                    <div className="pr-2 py-2 cursor-default select-none truncate font-bold text-gray-700 dark:text-gray-300">
+                        {item.label}
+                    </div>
                     {item.options.map((item, index) => (
                         <Item key={index} item={item} />
                     ))}

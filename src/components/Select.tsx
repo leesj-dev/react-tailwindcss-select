@@ -20,7 +20,7 @@ const Select: React.FC<SelectProps> = ({
     isSearchable = false,
     isDisabled = false,
     menuIsOpen = false,
-    noOptionsMessage = "검색결과가 없습니다",
+    noOptionsMessage = "검색결과가 없습니다"
 }) => {
     const [open, setOpen] = useState<boolean>(menuIsOpen);
     const [list, setList] = useState<ListOption>(options);
@@ -33,16 +33,16 @@ const Select: React.FC<SelectProps> = ({
             if ("disabled" in item) return item;
             return {
                 ...item,
-                disabled: false,
+                disabled: false
             };
         };
 
         setList(
-            options.map((item) => {
+            options.map(item => {
                 if ("options" in item) {
                     return {
                         label: item.label,
-                        options: item.options.map(formatItem),
+                        options: item.options.map(formatItem)
                     };
                 } else {
                     return formatItem(item);
@@ -117,7 +117,7 @@ const Select: React.FC<SelectProps> = ({
         (e: React.MouseEvent<HTMLDivElement>, item: Option) => {
             if (isMultiple && Array.isArray(value) && value.length) {
                 e.stopPropagation();
-                const result = value.filter((current) => item.value !== current.value);
+                const result = value.filter(current => item.value !== current.value);
                 onChange(result.length ? result : null);
             }
         },
@@ -154,21 +154,32 @@ const Select: React.FC<SelectProps> = ({
                 >
                     <div className="absolute inset-0 left-0 right-0 justify-center items-center px-4 flex flex-wrap gap-1">
                         {!isMultiple ? (
-                            <p className="truncate cursor-default select-none">{value && !Array.isArray(value) ? value.label : placeholder}</p>
+                            <p className="truncate cursor-default select-none">
+                                {value && !Array.isArray(value) ? value.label : placeholder}
+                            </p>
                         ) : (
                             <>
                                 {value === null && placeholder}
 
                                 {Array.isArray(value) &&
                                     value.map((item, index) => (
-                                        <div className={`bg-gray-200 border rounded-lg flex space-x-1 ${isDisabled ? "border-gray-500 px-1" : "pl-1"}`} key={index}>
-                                            <p className="text-gray-600 truncate cursor-default select-none">{item.label}</p>
+                                        <div
+                                            className={`bg-gray-200 border rounded-lg flex space-x-1 ${
+                                                isDisabled ? "border-gray-500 px-1" : "pl-1"
+                                            }`}
+                                            key={index}
+                                        >
+                                            <p className="text-gray-600 truncate cursor-default select-none">
+                                                {item.label}
+                                            </p>
                                             {!isDisabled && (
                                                 <div
                                                     role="button"
                                                     tabIndex={0}
-                                                    onClick={(e) => removeItem(e, item)}
-                                                    className={"flex items-center px-1 cursor-pointer rounded-lg hover:bg-red-200 hover:text-red-600"}
+                                                    onClick={e => removeItem(e, item)}
+                                                    className={
+                                                        "flex items-center px-1 cursor-pointer rounded-lg hover:bg-red-200 hover:text-red-600"
+                                                    }
                                                 >
                                                     <CloseIcon className={"w-3 h-3 mt-0.5"} />
                                                 </div>
@@ -187,26 +198,44 @@ const Select: React.FC<SelectProps> = ({
                         )}
 
                         <div className="pr-1.5">
-                            <ChevronIcon className={`transition duration-300 w-6 h-6 p-0.5${open ? "transform rotate-90 text-gray-500" : "text-gray-300"}`} />
+                            <ChevronIcon
+                                className={`transition duration-300 w-6 h-6 p-0.5${
+                                    open ? "transform rotate-90 text-gray-500" : "text-gray-300"
+                                }`}
+                            />
                         </div>
                     </div>
                 </div>
 
                 {open && !isDisabled && (
-                    <div className={"absolute z-10 w-full bg-white dark:bg-gray-800 shadow-lg border dark:border-gray-600 rounded-lg py-1.5 mt-1.5 text-sm text-gray-700 dark:text-gray-300"}>
+                    <div
+                        className={
+                            "absolute z-10 w-full bg-white dark:bg-gray-800 shadow-lg border dark:border-gray-600 rounded-lg py-1.5 mt-1.5 text-sm text-gray-700 dark:text-gray-300"
+                        }
+                    >
                         {isSearchable && (
                             <SearchInput
                                 ref={searchBoxRef}
                                 value={inputValue}
                                 placeholder={searchInputPlaceholder}
-                                onChange={(e) => {
-                                    if (onSearchInputChange && typeof onSearchInputChange === "function") onSearchInputChange(e);
+                                onChange={e => {
+                                    if (
+                                        onSearchInputChange &&
+                                        typeof onSearchInputChange === "function"
+                                    )
+                                        onSearchInputChange(e);
                                     setInputValue(e.target.value);
                                 }}
                             />
                         )}
 
-                        <Options list={list} noOptionsMessage={noOptionsMessage} text={inputValue} isMultiple={isMultiple} value={value} />
+                        <Options
+                            list={list}
+                            noOptionsMessage={noOptionsMessage}
+                            text={inputValue}
+                            isMultiple={isMultiple}
+                            value={value}
+                        />
                     </div>
                 )}
             </div>

@@ -31,7 +31,9 @@ const Item: React.FC<Props> = ({ item }) => {
                     role={"option"}
                     onClick={() => handleValueChange(item)}
                     className={`block transition duration-200 px-2 py-2 cursor-pointer select-none whitespace-nowrap rounded-lg ${
-                        isSelected ? "text-white bg-blue-500" : "text-gray-500 dark:text-gray-400 hover:bg-blue-100 dark:hover:bg-gray-700 hover:text-blue-500 dark:hover:text-white"
+                        isSelected
+                            ? "text-white bg-blue-500"
+                            : "text-gray-500 dark:text-gray-400 hover:bg-blue-100 dark:hover:bg-gray-700 hover:text-blue-500 dark:hover:text-white"
                     }`}
                 >
                     {item.label}
