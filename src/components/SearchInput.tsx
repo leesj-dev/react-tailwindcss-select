@@ -1,7 +1,5 @@
-import React, { forwardRef, useContext } from "react";
-
+import React, { forwardRef } from "react";
 import { SearchIcon } from "./Icons";
-import { SelectContext } from "./SelectProvider";
 
 interface SearchInputProps {
     placeholder?: string;
@@ -10,33 +8,13 @@ interface SearchInputProps {
     name?: string;
 }
 
-const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(function SearchInput(
-    { placeholder = "", value = "", onChange, name = "" },
-    ref
-) {
-    const { classNames } = useContext(SelectContext);
+const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(function SearchInput({ placeholder = "", value = "", onChange, name = "" }, ref) {
     return (
-        <div
-            className={
-                classNames && classNames.searchContainer
-                    ? classNames.searchContainer
-                    : "relative py-1 px-2.5"
-            }
-        >
-            <SearchIcon
-                className={
-                    classNames && classNames.searchIcon
-                        ? classNames.searchIcon
-                        : "absolute w-5 h-5 mt-2.5 pb-0.5 ml-2 text-gray-500"
-                }
-            />
+        <div className="relative py-1 px-2.5">
+            <SearchIcon className="absolute w-5 h-5 mt-2.5 pb-0.5 ml-2 text-gray-500" />
             <input
                 ref={ref}
-                className={
-                    classNames && classNames.searchBox
-                        ? classNames.searchBox
-                        : "w-full py-2 pl-8 text-sm text-gray-500 bg-gray-100 border border-gray-200 rounded focus:border-gray-200 focus:ring-0 focus:outline-none"
-                }
+                className="w-full py-2 pl-8 text-sm text-gray-500 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:border-gray-200 dark:focus:border-gray-500 focus:ring-0 focus:outline-none"
                 type="text"
                 placeholder={placeholder}
                 value={value}
