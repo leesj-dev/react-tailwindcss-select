@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import useOnClickOutside from "../hooks/use-onclick-outside";
-
 import { ChevronIcon, CloseIcon } from "./Icons";
 import Options, { containsKChar } from "./Options";
 import SearchInput from "./SearchInput";
@@ -21,7 +20,7 @@ const Select: React.FC<SelectProps> = ({
     searchType = "text",
     isDisabled = false,
     menuIsOpen = false,
-    noOptionsMessage = "검색결과가 없습니다",
+    noOptionsMessage = "검색결과가 없습니다"
 }) => {
     const [open, setOpen] = useState<boolean>(menuIsOpen);
     const [list, setList] = useState<ListOption>(options);
@@ -46,16 +45,16 @@ const Select: React.FC<SelectProps> = ({
             if ("disabled" in item) return item;
             return {
                 ...item,
-                disabled: false,
+                disabled: false
             };
         };
 
         setList(
-            options.map((item) => {
+            options.map(item => {
                 if ("options" in item) {
                     return {
                         label: item.label,
-                        options: item.options.map(formatItem),
+                        options: item.options.map(formatItem)
                     };
                 } else {
                     return formatItem(item);
@@ -130,7 +129,7 @@ const Select: React.FC<SelectProps> = ({
         (e: React.MouseEvent<HTMLDivElement>, item: Option) => {
             if (isMultiple && Array.isArray(value) && value.length) {
                 e.stopPropagation();
-                const result = value.filter((current) => item.value !== current.value);
+                const result = value.filter(current => item.value !== current.value);
                 onChange(result.length ? result : null);
             }
         },
@@ -170,21 +169,32 @@ const Select: React.FC<SelectProps> = ({
                 >
                     <div className="absolute inset-0 left-0 right-0 justify-center items-center px-[1.35rem] flex flex-wrap gap-1">
                         {!isMultiple ? (
-                            <p className="truncate cursor-default select-none">{value && !Array.isArray(value) ? value.label : placeholder}</p>
+                            <p className="truncate cursor-default select-none">
+                                {value && !Array.isArray(value) ? value.label : placeholder}
+                            </p>
                         ) : (
                             <>
                                 {value === null && placeholder}
 
                                 {Array.isArray(value) &&
                                     value.map((item, index) => (
-                                        <div className={`bg-gray-200 border rounded-lg flex space-x-1 ${isDisabled ? "border-gray-500 px-1" : "pl-1"}`} key={index}>
-                                            <p className="text-gray-600 truncate cursor-default select-none">{item.label}</p>
+                                        <div
+                                            className={`bg-gray-200 border rounded-lg flex space-x-1 ${
+                                                isDisabled ? "border-gray-500 px-1" : "pl-1"
+                                            }`}
+                                            key={index}
+                                        >
+                                            <p className="text-gray-600 truncate cursor-default select-none">
+                                                {item.label}
+                                            </p>
                                             {!isDisabled && (
                                                 <div
                                                     role="button"
                                                     tabIndex={0}
-                                                    onClick={(e) => removeItem(e, item)}
-                                                    className={"flex items-center px-1 cursor-pointer rounded-lg hover:bg-red-200 hover:text-red-600"}
+                                                    onClick={e => removeItem(e, item)}
+                                                    className={
+                                                        "flex items-center px-1 cursor-pointer rounded-lg hover:bg-red-200 hover:text-red-600"
+                                                    }
                                                 >
                                                     <CloseIcon className={"w-3 h-3 mt-0.5"} />
                                                 </div>
@@ -203,7 +213,11 @@ const Select: React.FC<SelectProps> = ({
                         )}
 
                         <div className="pr-1.5">
-                            <ChevronIcon className={`transition duration-300 w-6 h-6 p-0.5${open ? "transform rotate-90 text-gray-500" : "text-gray-300"}`} />
+                            <ChevronIcon
+                                className={`transition duration-300 w-6 h-6 p-0.5${
+                                    open ? "transform rotate-90 text-gray-500" : "text-gray-300"
+                                }`}
+                            />
                         </div>
                     </div>
                 </div>
@@ -219,8 +233,12 @@ const Select: React.FC<SelectProps> = ({
                                 value={inputValue}
                                 searchType={searchType}
                                 placeholder={searchInputPlaceholder}
-                                onChange={(e) => {
-                                    if (onSearchInputChange && typeof onSearchInputChange === "function") onSearchInputChange(e);
+                                onChange={e => {
+                                    if (
+                                        onSearchInputChange &&
+                                        typeof onSearchInputChange === "function"
+                                    )
+                                        onSearchInputChange(e);
                                     let newValue = e.target.value;
                                     if (isKDefault && !newValue.startsWith("K")) {
                                         newValue = "K" + newValue.replace(/^K/, ""); // Ensure K is not removed
@@ -229,7 +247,13 @@ const Select: React.FC<SelectProps> = ({
                                 }}
                             />
                         )}
-                        <Options list={list} noOptionsMessage={noOptionsMessage} text={inputValue} isMultiple={isMultiple} value={value} />
+                        <Options
+                            list={list}
+                            noOptionsMessage={noOptionsMessage}
+                            text={inputValue}
+                            isMultiple={isMultiple}
+                            value={value}
+                        />
                     </div>
                 )}
             </div>
