@@ -3,7 +3,7 @@ import React, { useCallback, useMemo } from "react";
 import DisabledItem from "./DisabledItem";
 import GroupItem from "./GroupItem";
 import Item from "./Item";
-import { Option, Options as ListOption } from "./type";
+import { Option, Options as ListOption } from "../types";
 
 interface OptionsProps {
     list: ListOption;
@@ -17,94 +17,19 @@ const Options: React.FC<OptionsProps> = ({ list, noOptionsMessage, text, isMulti
     const filterByText = useCallback(() => {
         const normalizeText = (text: string) => {
             // 한글 자모 분리 함수
-            const chosung = [
-                "ㄱ",
-                "ㄲ",
-                "ㄴ",
-                "ㄷ",
-                "ㄸ",
-                "ㄹ",
-                "ㅁ",
-                "ㅂ",
-                "ㅃ",
-                "ㅅ",
-                "ㅆ",
-                "ㅇ",
-                "ㅈ",
-                "ㅉ",
-                "ㅊ",
-                "ㅋ",
-                "ㅌ",
-                "ㅍ",
-                "ㅎ"
-            ];
-            const jungsung = [
-                "ㅏ",
-                "ㅐ",
-                "ㅑ",
-                "ㅒ",
-                "ㅓ",
-                "ㅔ",
-                "ㅕ",
-                "ㅖ",
-                "ㅗ",
-                "ㅘ",
-                "ㅙ",
-                "ㅚ",
-                "ㅛ",
-                "ㅜ",
-                "ㅝ",
-                "ㅞ",
-                "ㅟ",
-                "ㅠ",
-                "ㅡ",
-                "ㅢ",
-                "ㅣ"
-            ];
-            const jongsung = [
-                "",
-                "ㄱ",
-                "ㄲ",
-                "ㄳ",
-                "ㄴ",
-                "ㄵ",
-                "ㄶ",
-                "ㄷ",
-                "ㄹ",
-                "ㄺ",
-                "ㄻ",
-                "ㄼ",
-                "ㄽ",
-                "ㄾ",
-                "ㄿ",
-                "ㅀ",
-                "ㅁ",
-                "ㅂ",
-                "ㅄ",
-                "ㅅ",
-                "ㅆ",
-                "ㅇ",
-                "ㅈ",
-                "ㅊ",
-                "ㅋ",
-                "ㅌ",
-                "ㅍ",
-                "ㅎ"
-            ];
+            const chosung = ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
+            const jungsung = ["ㅏ", "ㅐ", "ㅑ", "ㅒ", "ㅓ", "ㅔ", "ㅕ", "ㅖ", "ㅗ", "ㅘ", "ㅙ", "ㅚ", "ㅛ", "ㅜ", "ㅝ", "ㅞ", "ㅟ", "ㅠ", "ㅡ", "ㅢ", "ㅣ"];
+            const jongsung = ["", "ㄱ", "ㄲ", "ㄳ", "ㄴ", "ㄵ", "ㄶ", "ㄷ", "ㄹ", "ㄺ", "ㄻ", "ㄼ", "ㄽ", "ㄾ", "ㄿ", "ㅀ", "ㅁ", "ㅂ", "ㅄ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
 
             return text
                 .split("")
-                .map(char => {
+                .map((char) => {
                     const code = char.charCodeAt(0) - 44032;
                     if (code >= 0 && code <= 11171) {
                         const chosungIndex = Math.floor(code / 588);
                         const jungsungIndex = Math.floor((code - chosungIndex * 588) / 28);
                         const jongsungIndex = code % 28;
-                        return (
-                            chosung[chosungIndex] +
-                            jungsung[jungsungIndex] +
-                            jongsung[jongsungIndex]
-                        );
+                        return chosung[chosungIndex] + jungsung[jungsungIndex] + jongsung[jongsungIndex];
                     }
                     return char;
                 })
@@ -118,17 +43,17 @@ const Options: React.FC<OptionsProps> = ({ list, noOptionsMessage, text, isMulti
             return normalizedLabel.startsWith(normalizedText);
         };
 
-        let result = list.map(item => {
+        let result = list.map((item) => {
             if ("options" in item) {
                 return {
                     label: item.label,
-                    options: item.options.filter(filterItem)
+                    options: item.options.filter(filterItem),
                 };
             }
             return item;
         });
 
-        result = result.filter(item => {
+        result = result.filter((item) => {
             if ("options" in item) {
                 return item.options.length > 0;
             }
@@ -139,12 +64,8 @@ const Options: React.FC<OptionsProps> = ({ list, noOptionsMessage, text, isMulti
         result = result.sort((a, b) => {
             const aLabel = "options" in a ? a.options[0].label : a.label;
             const bLabel = "options" in b ? b.options[0].label : b.label;
-            const aStartsWith = normalizeText(aLabel.toLocaleLowerCase()).startsWith(
-                normalizedText
-            );
-            const bStartsWith = normalizeText(bLabel.toLocaleLowerCase()).startsWith(
-                normalizedText
-            );
+            const aStartsWith = normalizeText(aLabel.toLocaleLowerCase()).startsWith(normalizedText);
+            const bStartsWith = normalizeText(bLabel.toLocaleLowerCase()).startsWith(normalizedText);
 
             if (aStartsWith && !bStartsWith) return -1;
             if (!aStartsWith && bStartsWith) return 1;
@@ -161,21 +82,21 @@ const Options: React.FC<OptionsProps> = ({ list, noOptionsMessage, text, isMulti
             }
 
             if (Array.isArray(value)) {
-                const valueId = value.map(item => item.value);
+                const valueId = value.map((item) => item.value);
 
                 const filterItem = (item: Option) => !valueId.includes(item.value);
 
-                let newArray = array.map(item => {
+                let newArray = array.map((item) => {
                     if ("options" in item) {
                         return {
                             label: item.label,
-                            options: item.options.filter(filterItem)
+                            options: item.options.filter(filterItem),
                         };
                     }
                     return item;
                 });
 
-                newArray = newArray.filter(item => {
+                newArray = newArray.filter((item) => {
                     if ("options" in item) {
                         return item.options.length > 0;
                     } else {
@@ -217,6 +138,15 @@ const Options: React.FC<OptionsProps> = ({ list, noOptionsMessage, text, isMulti
             {filterResult.length === 0 && <DisabledItem>{noOptionsMessage}</DisabledItem>}
         </div>
     );
+};
+
+export const containsKChar = (list: ListOption) => {
+    return list.some((item) => {
+        if ("options" in item) {
+            return item.options.some((subItem) => subItem.label.includes("K"));
+        }
+        return item.label.includes("K");
+    });
 };
 
 export default Options;

@@ -3,10 +3,10 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import useOnClickOutside from "../hooks/use-onclick-outside";
 
 import { ChevronIcon, CloseIcon } from "./Icons";
-import Options from "./Options";
+import Options, { containsKChar } from "./Options";
 import SearchInput from "./SearchInput";
 import SelectProvider from "./SelectProvider";
-import { Option, Options as ListOption, SelectProps } from "./type";
+import { Option, Options as ListOption, SelectProps } from "../types";
 
 const Select: React.FC<SelectProps> = ({
     options = [],
@@ -18,31 +18,44 @@ const Select: React.FC<SelectProps> = ({
     isMultiple = false,
     isClearable = false,
     isSearchable = false,
+    searchType = "text",
     isDisabled = false,
     menuIsOpen = false,
-    noOptionsMessage = "검색결과가 없습니다"
+    noOptionsMessage = "검색결과가 없습니다",
 }) => {
     const [open, setOpen] = useState<boolean>(menuIsOpen);
     const [list, setList] = useState<ListOption>(options);
     const [inputValue, setInputValue] = useState<string>("");
+    const [isKDefault, setIsKDefault] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
     const searchBoxRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const containsK = containsKChar(list);
+        if (containsK) {
+            setInputValue("K");
+            setIsKDefault(true);
+        } else {
+            setInputValue("");
+            setIsKDefault(false);
+        }
+    }, [list]);
 
     useEffect(() => {
         const formatItem = (item: Option) => {
             if ("disabled" in item) return item;
             return {
                 ...item,
-                disabled: false
+                disabled: false,
             };
         };
 
         setList(
-            options.map(item => {
+            options.map((item) => {
                 if ("options" in item) {
                     return {
                         label: item.label,
-                        options: item.options.map(formatItem)
+                        options: item.options.map(formatItem),
                     };
                 } else {
                     return formatItem(item);
@@ -117,7 +130,7 @@ const Select: React.FC<SelectProps> = ({
         (e: React.MouseEvent<HTMLDivElement>, item: Option) => {
             if (isMultiple && Array.isArray(value) && value.length) {
                 e.stopPropagation();
-                const result = value.filter(current => item.value !== current.value);
+                const result = value.filter((current) => item.value !== current.value);
                 onChange(result.length ? result : null);
             }
         },
@@ -126,16 +139,19 @@ const Select: React.FC<SelectProps> = ({
 
     const divRef = useRef<HTMLDivElement>(null);
 
-    // 검색 때문에 focus가 제대로 안되는 문제 해결
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            if (divRef.current) {
-                divRef.current.focus();
-            }
-        }, 0);
+    // 열고 닫을 때 자연스러운 전환
+    const [shouldRender, setShouldRender] = useState(false);
+    const [fade, setFade] = useState(false);
 
-        return () => clearTimeout(timeoutId);
-    }, [open]);
+    useEffect(() => {
+        if (open && !isDisabled) {
+            setShouldRender(true);
+            setTimeout(() => setFade(true), 10); // Small delay to ensure the element is rendered before fade in starts
+        } else {
+            setFade(false);
+            setTimeout(() => setShouldRender(false), 300); // Match with the Tailwind transition duration
+        }
+    }, [open, isDisabled]);
 
     return (
         <SelectProvider value={value} handleValueChange={handleValueChange}>
@@ -152,34 +168,23 @@ const Select: React.FC<SelectProps> = ({
                             : "bg-white dark:bg-gray-700 hover:border-gray-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring focus:ring-blue-500/20 dark:focus:ring-blue-400/20"
                     }`}
                 >
-                    <div className="absolute inset-0 left-0 right-0 justify-center items-center px-4 flex flex-wrap gap-1">
+                    <div className="absolute inset-0 left-0 right-0 justify-center items-center px-[1.35rem] flex flex-wrap gap-1">
                         {!isMultiple ? (
-                            <p className="truncate cursor-default select-none">
-                                {value && !Array.isArray(value) ? value.label : placeholder}
-                            </p>
+                            <p className="truncate cursor-default select-none">{value && !Array.isArray(value) ? value.label : placeholder}</p>
                         ) : (
                             <>
                                 {value === null && placeholder}
 
                                 {Array.isArray(value) &&
                                     value.map((item, index) => (
-                                        <div
-                                            className={`bg-gray-200 border rounded-lg flex space-x-1 ${
-                                                isDisabled ? "border-gray-500 px-1" : "pl-1"
-                                            }`}
-                                            key={index}
-                                        >
-                                            <p className="text-gray-600 truncate cursor-default select-none">
-                                                {item.label}
-                                            </p>
+                                        <div className={`bg-gray-200 border rounded-lg flex space-x-1 ${isDisabled ? "border-gray-500 px-1" : "pl-1"}`} key={index}>
+                                            <p className="text-gray-600 truncate cursor-default select-none">{item.label}</p>
                                             {!isDisabled && (
                                                 <div
                                                     role="button"
                                                     tabIndex={0}
-                                                    onClick={e => removeItem(e, item)}
-                                                    className={
-                                                        "flex items-center px-1 cursor-pointer rounded-lg hover:bg-red-200 hover:text-red-600"
-                                                    }
+                                                    onClick={(e) => removeItem(e, item)}
+                                                    className={"flex items-center px-1 cursor-pointer rounded-lg hover:bg-red-200 hover:text-red-600"}
                                                 >
                                                     <CloseIcon className={"w-3 h-3 mt-0.5"} />
                                                 </div>
@@ -198,44 +203,33 @@ const Select: React.FC<SelectProps> = ({
                         )}
 
                         <div className="pr-1.5">
-                            <ChevronIcon
-                                className={`transition duration-300 w-6 h-6 p-0.5${
-                                    open ? "transform rotate-90 text-gray-500" : "text-gray-300"
-                                }`}
-                            />
+                            <ChevronIcon className={`transition duration-300 w-6 h-6 p-0.5${open ? "transform rotate-90 text-gray-500" : "text-gray-300"}`} />
                         </div>
                     </div>
                 </div>
 
-                {open && !isDisabled && (
+                {shouldRender && (
                     <div
-                        className={
-                            "absolute z-10 w-full bg-white dark:bg-gray-800 shadow-lg border dark:border-gray-600 rounded-lg py-1.5 mt-1.5 text-sm text-gray-700 dark:text-gray-300"
-                        }
+                        className={`absolute z-10 w-full bg-white dark:bg-gray-800 shadow-lg border dark:border-gray-600 rounded-lg py-1.5 mt-1.5 text-sm text-gray-700 dark:text-gray-300
+                            transition-opacity duration-300 ${fade ? "opacity-100" : "opacity-0"}`}
                     >
                         {isSearchable && (
                             <SearchInput
                                 ref={searchBoxRef}
                                 value={inputValue}
+                                searchType={searchType}
                                 placeholder={searchInputPlaceholder}
-                                onChange={e => {
-                                    if (
-                                        onSearchInputChange &&
-                                        typeof onSearchInputChange === "function"
-                                    )
-                                        onSearchInputChange(e);
-                                    setInputValue(e.target.value);
+                                onChange={(e) => {
+                                    if (onSearchInputChange && typeof onSearchInputChange === "function") onSearchInputChange(e);
+                                    let newValue = e.target.value;
+                                    if (isKDefault && !newValue.startsWith("K")) {
+                                        newValue = "K" + newValue.replace(/^K/, ""); // Ensure K is not removed
+                                    }
+                                    setInputValue(newValue);
                                 }}
                             />
                         )}
-
-                        <Options
-                            list={list}
-                            noOptionsMessage={noOptionsMessage}
-                            text={inputValue}
-                            isMultiple={isMultiple}
-                            value={value}
-                        />
+                        <Options list={list} noOptionsMessage={noOptionsMessage} text={inputValue} isMultiple={isMultiple} value={value} />
                     </div>
                 )}
             </div>
